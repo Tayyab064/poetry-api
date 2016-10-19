@@ -80,6 +80,12 @@ test:
 #
 production:
   <<: *default
-  database: poetry_api_production
-  username: poetry_api
-  password: <%= ENV['POETRY_API_DATABASE_PASSWORD'] %>
+  adapter: postgresql
+  encoding: unicode
+  username: kyzskifwlhzhkc
+  password: 3DGd_H5-BcNngJXndk_v5J2S_F
+  hostname: ec2-107-22-238-96.compute-1.amazonaws.com
+  pool: 5
+  port: 5432
+  url: postgres://kyzskifwlhzhkc:3DGd_H5-BcNngJXndk_v5J2S_F@ec2-107-22-238-96.compute-1.amazonaws.com:5432/dc68mjqg0i5v4q
+  database: dc68mjqg0i5v4q
