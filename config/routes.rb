@@ -29,6 +29,7 @@ Rails.application.routes.draw do
   get 'scrapping' =>  'sher#do_scrapping'
   get 'sher/:id' => 'sher#show'
   get 'search/category/:category' => 'search#search_category'
+  post 'search/sher' => 'search#search_sher'
   get 'shers' => 'sher#get_json'
 
   # Example resource route with sub-resources:
