@@ -14,6 +14,9 @@ class SherController < ApplicationController
 			if c = open(shayiri['href']) 
 			 p shayiri['href'] 
 			 cat = shayiri['href'].split('/').last
+			 if cat.include?('.html')
+			 	cat = shayiri['href'].split('/')[shayiri['href'].split('/').count-2]
+			 end
 			 doci = Nokogiri::HTML(c) 
 			 if sha = doci.css('.navigation #wp_page_numbers ul .page_info')
 				 pag =  sha.text.split.last.to_i 
@@ -23,19 +26,19 @@ class SherController < ApplicationController
 					 if ci = open(ur) 
 				 	 	docie = Nokogiri::HTML(ci) 
 					 	docie.css(".pbgmain").each do |sha| 
-							@shay.push({ 'body' => sha.text.gsub(/\(.*\)/, "").gsub(/\*/,"") , 'category' => cat , 'url' => ur})
+							@shay.push({ 'body' => sha.text.gsub(/\(.*\)/, "").gsub(/\*/,"").gsub(/Watch Video/,"") , 'category' => cat , 'url' => ur})
 					 	end 
 					 	docie.css(".pbg").each do |sha| 
-							@shay.push({ 'body' => sha.text.gsub(/\(.*\)/, "").gsub(/\*/,"") , 'category' => cat , 'url' => ur})
+							@shay.push({ 'body' => sha.text.gsub(/\(.*\)/, "").gsub(/\*/,"").gsub(/Watch Video/,"") , 'category' => cat , 'url' => ur})
 					 	end 
 					 end 
 				 end 
 			 else 
 				 doci.css(".pbgmain").each do |sha| 
-					@shay.push({ 'body' => sha.text.gsub(/\(.*\)/, "").gsub(/\*/,"") , 'category' => cat , 'url' => shayiri['href']})
+					@shay.push({ 'body' => sha.text.gsub(/\(.*\)/, "").gsub(/\*/,"").gsub(/Watch Video/,"") , 'category' => cat , 'url' => shayiri['href']})
 				 end 
 				 doci.css(".pbg").each do |sha| 
-					@shay.push({ 'body' => sha.text.gsub(/\(.*\)/, "").gsub(/\*/,"") , 'category' => cat , 'url' => shayiri['href']})
+					@shay.push({ 'body' => sha.text.gsub(/\(.*\)/, "").gsub(/\*/,"").gsub(/Watch Video/,"") , 'category' => cat , 'url' => shayiri['href']})
 				 end
 			 end
 		 	end
