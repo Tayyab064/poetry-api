@@ -51,7 +51,7 @@ class SherController < ApplicationController
 				end
 		    end
 		end
-
+		p "Done"
 		render json: {'message' => 'Scrapping Done!'} , status: :ok
 	end
 
