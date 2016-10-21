@@ -31,6 +31,7 @@ Rails.application.routes.draw do
   get 'search/category/:category' => 'search#search_category'
   post 'search/sher' => 'search#search_sher'
   get 'shers' => 'sher#get_json'
+  get 'categories' => 'sher#get_category'
 
   # Example resource route with sub-resources:
   #   resources :products do
