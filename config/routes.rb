@@ -33,7 +33,7 @@ Rails.application.routes.draw do
   get 'shers' => 'sher#get_json'
   get 'categories' => 'sher#get_category'
   get 'poets' => 'sher#get_poets'
-  get 'shers_response' => 'sher#get_sher'
+  get 'shers_response' => 'sher#get_shers'
 
   # Example resource route with sub-resources:
   #   resources :products do

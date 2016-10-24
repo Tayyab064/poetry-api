@@ -117,7 +117,7 @@ class SherController < ApplicationController
 		render json: data , status: :ok
 	end
 
-	def get_sher
+	def get_shers
 		data = Sher.all.order(created_at: 'DESC')
 		render json: data , status: :ok
 	end
