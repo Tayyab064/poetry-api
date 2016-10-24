@@ -48,6 +48,65 @@ class SherController < ApplicationController
 		 	end
 		end
 
+		br_loop = true
+		cou = 1
+		while(br_loop)
+			c = open("http://www.santabanta.com/sms/shayari/?page=" + cou.to_s)
+			p "http://www.santabanta.com/sms/shayari/?page=" + cou.to_s
+			@doc = Nokogiri::HTML(c)
+			@categor = @doc.css('.sms_list_box li')
+			if @categor.count == 0
+				br_loop = false
+			else
+				@categor.each do |di|
+					if di.css('.sms_list_box_1 .sms_text').text.split('~').count > 1
+						texti = di.css('.sms_list_box_1 .sms_text').text.split('~')[0]
+						cat = di.css('.sms_list_box_1 .sms_text').text.split('~')[1]
+					else
+						texti = di.css('.sms_list_box_1 .sms_text').text
+						cat = di.css('.sms_list_box_2 .sms_category').text
+					end
+					@shay.push({ 'body' => texti , 'category' => cat , 'url' => "http://www.santabanta.com/sms/shayari/?page=" + cou.to_s})
+				end
+			end
+			cou = cou + 1
+		end
+
+		#.gsub(/\r/,"").gsub(/\n/,"").gsub(/\t/,"")
+		p "saving"
+		Sher.transaction do
+		    @shay.each do |sh|
+		    	Sher.find_or_create_by(body: sh["body"]) do |she|
+				  she.url = sh["url"]
+				 she.category = sh["category"]
+				end
+		    end
+		end
+		File.open("public/poetry.json", "w") do |f| 
+		  f.write(@shay.to_json)
+		end
+		p "Done"
+		render json: {'message' => 'Scrapping Done!'} , status: :ok		 
+	end
+
+	def show
+		render json: @sher , status: :ok
+	end
+
+	def get_json
+		#File.open("public/temp.json","w") do |f|
+		#  f.write(tempHash.to_json)
+		#end
+		data = Sher.all.to_json
+		send_data data, :type => 'application/json; header=present', :disposition => "attachment; filename=poetry.json"
+	end
+
+	def get_category
+		data = Sher.all.pluck(:category).uniq
+		render json: data , status: :ok
+	end
+
+	def rekhta
 		@poets = []
 		#rek = open("https://rekhta.org/poets")
 		#@rek_doc = Nokogiri::HTML(rek)
@@ -105,40 +164,6 @@ class SherController < ApplicationController
 				end
 			end
 		end
-
-
-		#.gsub(/\r/,"").gsub(/\n/,"").gsub(/\t/,"")
-		p "saving"
-		Sher.transaction do
-		    @shay.each do |sh|
-		    	Sher.find_or_create_by(body: sh["body"]) do |she|
-				  she.url = sh["url"]
-				 she.category = sh["category"]
-				end
-		    end
-		end
-		File.open("public/poetry.json", "w") do |f| 
-		  f.write(@shay.to_json)
-		end
-		p "Done"
-		render json: {'message' => 'Scrapping Done!'} , status: :ok		 
-	end
-
-	def show
-		render json: @sher , status: :ok
-	end
-
-	def get_json
-		#File.open("public/temp.json","w") do |f|
-		#  f.write(tempHash.to_json)
-		#end
-		data = Sher.all.to_json
-		send_data data, :type => 'application/json; header=present', :disposition => "attachment; filename=poetry.json"
-	end
-
-	def get_category
-		data = Sher.all.pluck(:category).uniq
-		render json: data , status: :ok
 	end
 
 	private
