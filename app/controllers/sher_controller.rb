@@ -103,15 +103,17 @@ class SherController < ApplicationController
 	end
 
 	def get_json
-		#File.open("public/temp.json","w") do |f|
-		#  f.write(tempHash.to_json)
-		#end
 		data = Sher.all.to_json
 		send_data data, :type => 'application/json; header=present', :disposition => "attachment; filename=poetry.json"
 	end
 
 	def get_category
-		data = Sher.all.pluck(:category).uniq
+		data = Sher.pluck(:category).uniq.reject(&:empty?)
+		render json: data , status: :ok
+	end
+
+	def get_poets
+		data = Sher.pluck(:poet).uniq.reject(&:empty?)
 		render json: data , status: :ok
 	end
 
