@@ -17,9 +17,16 @@ class SherController < ApplicationController
 		@categor.each do |shayiri| 
 			if c = open(shayiri['href']) 
 			 p shayiri['href'] 
-			 cat = shayiri['href'].split('/').last
-			 if cat.include?('.html')
-			 	cat = shayiri['href'].split('/')[shayiri['href'].split('/').count-2]
+			 poe = ''
+			 if shayiri['href'].include?('urdu-poets')
+			 	poe = shayiri['href'].split('urdu-poets/')[1].split('/')[0]
+			 	cat = ""
+			 else
+			 	cat = shayiri['href'].split('/').last
+				if cat.include?('.html')
+					cat = shayiri['href'].split('/')[shayiri['href'].split('/').count-2]
+				end
+				poe = ""
 			 end
 			 doci = Nokogiri::HTML(c) 
 			 if sha = doci.css('.navigation #wp_page_numbers ul .page_info')
@@ -30,19 +37,19 @@ class SherController < ApplicationController
 					 if ci = open(ur) 
 				 	 	docie = Nokogiri::HTML(ci) 
 					 	docie.css(".pbgmain").each do |sha| 
-							@shay.push({ 'body' => sha.text.gsub(/\(.*\)/, "").gsub(/\*/,"").gsub(/Watch Video/,"") , 'category' => cat , 'url' => ur})
+							@shay.push({ 'body' => sha.text.gsub(/\(.*\)/, "").gsub(/\*/,"").gsub(/Watch Video/,"") , 'category' => cat , 'url' => ur , 'poet' => poe})
 					 	end 
 					 	docie.css(".pbg").each do |sha| 
-							@shay.push({ 'body' => sha.text.gsub(/\(.*\)/, "").gsub(/\*/,"").gsub(/Watch Video/,"") , 'category' => cat , 'url' => ur})
+							@shay.push({ 'body' => sha.text.gsub(/\(.*\)/, "").gsub(/\*/,"").gsub(/Watch Video/,"") , 'category' => cat , 'url' => ur , 'poet' => poe})
 					 	end 
 					 end 
 				 end 
 			 else 
 				 doci.css(".pbgmain").each do |sha| 
-					@shay.push({ 'body' => sha.text.gsub(/\(.*\)/, "").gsub(/\*/,"").gsub(/Watch Video/,"") , 'category' => cat , 'url' => shayiri['href']})
+					@shay.push({ 'body' => sha.text.gsub(/\(.*\)/, "").gsub(/\*/,"").gsub(/Watch Video/,"") , 'category' => cat , 'url' => shayiri['href'] , 'poet' => poe})
 				 end 
 				 doci.css(".pbg").each do |sha| 
-					@shay.push({ 'body' => sha.text.gsub(/\(.*\)/, "").gsub(/\*/,"").gsub(/Watch Video/,"") , 'category' => cat , 'url' => shayiri['href']})
+					@shay.push({ 'body' => sha.text.gsub(/\(.*\)/, "").gsub(/\*/,"").gsub(/Watch Video/,"") , 'category' => cat , 'url' => shayiri['href'] , 'poet' => poe})
 				 end
 			 end
 		 	end
@@ -61,12 +68,13 @@ class SherController < ApplicationController
 				@categor.each do |di|
 					if di.css('.sms_list_box_1 .sms_text').text.split('~').count > 1
 						texti = di.css('.sms_list_box_1 .sms_text').text.split('~')[0]
-						cat = di.css('.sms_list_box_1 .sms_text').text.split('~')[1]
+						poe = di.css('.sms_list_box_1 .sms_text').text.split('~')[1]
 					else
 						texti = di.css('.sms_list_box_1 .sms_text').text
-						cat = di.css('.sms_list_box_2 .sms_category').text
+						poe = ''
 					end
-					@shay.push({ 'body' => texti , 'category' => cat , 'url' => "http://www.santabanta.com/sms/shayari/?page=" + cou.to_s})
+					cat = di.css('.sms_list_box_2 .sms_category').text
+					@shay.push({ 'body' => texti , 'category' => cat , 'url' => "http://www.santabanta.com/sms/shayari/?page=" + cou.to_s , 'poet' => poe})
 				end
 			end
 			cou = cou + 1
@@ -77,8 +85,9 @@ class SherController < ApplicationController
 		Sher.transaction do
 		    @shay.each do |sh|
 		    	Sher.find_or_create_by(body: sh["body"]) do |she|
-				  she.url = sh["url"]
+				 she.url = sh["url"]
 				 she.category = sh["category"]
+				 she.poet = sh["poet"]
 				end
 		    end
 		end

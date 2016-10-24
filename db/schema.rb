@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161019051939) do
+ActiveRecord::Schema.define(version: 20161024102156) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -22,6 +22,7 @@ ActiveRecord::Schema.define(version: 20161019051939) do
     t.string   "category",   default: ""
     t.datetime "created_at",              null: false
     t.datetime "updated_at",              null: false
+    t.string   "poet",       default: ""
   end
 
   add_index "shers", ["body", "category"], name: "index_shers_on_body_and_category", using: :btree
