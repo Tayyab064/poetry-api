@@ -117,6 +117,11 @@ class SherController < ApplicationController
 		render json: data , status: :ok
 	end
 
+	def get_sher
+		data = Sher.all.order(created_at: 'DESC')
+		render json: data , status: :ok
+	end
+
 	def rekhta
 		@poets = []
 		#rek = open("https://rekhta.org/poets")
